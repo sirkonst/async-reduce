@@ -1,0 +1,73 @@
+stages:
+  - test
+  - test_post
+  - release
+
+
+# -- Test ---------------------------------------------------------------------
+
+.test_template: &test_template
+  stage: test
+  image: python:$PYTHON_VERSION
+  before_script:
+    - pip install tox
+  script:
+    - make test PYTHON=$PYTHON_VERSION
+  artifacts:
+    paths:
+      - .coverage/data*
+
+test_3.5:
+  <<: *test_template
+  variables:
+    PYTHON_VERSION: '3.5'
+
+test_3.6:
+  <<: *test_template
+  variables:
+    PYTHON_VERSION: '3.6'
+
+test_3.7:
+  <<: *test_template
+  variables:
+    PYTHON_VERSION: '3.7'
+
+
+# -- Test Post ----------------------------------------------------------------
+
+coverage:
+  stage: test_post
+  image: python
+  before_script:
+    - pip install tox -U
+  script:
+    - tox -e coverage_report
+  dependencies:
+    - test_3.5
+    - test_3.6
+    - test_3.7
+  coverage: '/TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+[.]\d+?)\%/'
+  artifacts:
+    paths:
+      - htmlcov/
+
+
+# -- Release ------------------------------------------------------------------
+
+upload_to_pypi:
+  stage: release
+  image: python
+  before_script:
+    - pip install setuptools wheel twine -U
+  script:
+    - make build_dist LOCALVERSION=
+    - make upload
+  when: manual
+  only:
+    - master
+    - /^release/.+$/
+    - tags
+  environment:
+    name: PyPi
+    url: https://pypi.org/project/async-reduce/
+  dependencies: []  # don't fetch artifacts
