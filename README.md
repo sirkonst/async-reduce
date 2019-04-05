@@ -54,8 +54,8 @@ performs **N** requests to *inner-service* and **N** queries to *database*.
 In total: **N** simultaneous requests emits **2 * N** requests to inner systems. 
 
 With ``async_reduce`` if client performs **N** simultaneous requests *web_server*
-performs **one** requests to *inner-service* and **one** queries to *database*.
-In total: **N** simultaneous requests emits only **2** requests to inner systems.
+performs **one** request to *inner-service* and **one** query to *database*.
+In total: **N** simultaneous requests emit only **2** requests to inner systems.
 
 See other real [examples](https://github.com/sirkonst/async-reduce/tree/master/examples).
 
@@ -63,14 +63,14 @@ See other real [examples](https://github.com/sirkonst/async-reduce/tree/master/e
 Similar coroutines determination 
 --------------------------------
 
-``async_reduce(coroutine)`` tries detect similar coroutines by hashing local 
-variables bounded on call. It's not working correctly when:
+``async_reduce(coroutine)`` tries to detect similar coroutines by hashing local 
+variables bounded on call. It does not work correctly if:
 
-* one of arguments is not hashable
-* coroutine function is method of class with specific state (like ORM)
+* one of the arguments is not hashable
+* coroutine function is a method of class with specific state (like ORM)
 * coroutine function has closure to unhashable variable
 
-You can disable auto-determination by set custom key to argument ``ident``.
+You can disable auto-determination by setting custom key to argument ``ident``.
 
 
 Use as decorator
