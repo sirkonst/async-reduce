@@ -66,6 +66,7 @@ async def test_reducer_stats_none():
 
     await asyncio.wait(coros)
     assert not async_reduce._stats
+    assert not async_reduce._ident_args
 
 
 async def test_reducer_stats_overall():
@@ -88,6 +89,7 @@ async def test_reducer_stats_overall():
         await asyncio.wait(coros)
 
     assert len(async_reduce._stats) == 1
+    assert len(async_reduce._ident_args) == 0
     assert async_reduce._stats[None].n == 20
     assert async_reduce._stats[None].mean == 1/10
 
@@ -112,6 +114,7 @@ async def test_reducer_stats_detailed():
         await asyncio.wait(coros)
 
     assert len(async_reduce._stats) == 2
+    assert len(async_reduce._ident_args) == 2
     for stats in async_reduce._stats.values():
         assert stats.n == 10
         assert stats.mean == 1/10

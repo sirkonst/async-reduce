@@ -24,6 +24,7 @@ class AsyncReducer:
         self._running = {}  # type: typing.Dict[str, asyncio.Future]
         self._stats_level = stats_level
         self._stats = {}    # type: typing.Dict[Optional[str], AggregatedStats]
+        self._ident_args = {}     # type: typing.Dict[str, str]
 
     def __call__(
         self,
@@ -38,6 +39,8 @@ class AsyncReducer:
 
         future, created = self._get_or_create_future(ident)
 
+        self._add_stats(coro, ident, created)
+
         if created:
             self._running[ident] = future
             coro_runner = self._runner(ident, coro, future)
@@ -48,11 +51,12 @@ class AsyncReducer:
         else:
             coro.close()
 
-        self._add_stats(ident, created)
-
         return self._waiter(future)
 
-    def _add_stats(self, ident: str, created: bool):
+    def _add_stats(
+        self, coro: Coroutine[Any, Any, T_Result],
+        ident: str, created: bool
+    ):
         if not self._stats_level:
             return
         key = {
@@ -61,6 +65,8 @@ class AsyncReducer:
         }[self._stats_level]
         stats = self._stats.setdefault(key, AggregatedStats())
         stats.consume(float(created))
+        if self._stats_level == StatsLevel.DETAILED:
+            self._ident_args[ident] = repr(inspect.getcoroutinelocals(coro))
 
     @staticmethod
     def _auto_ident(coro: Coroutine[Any, Any, T_Result]) -> str:
