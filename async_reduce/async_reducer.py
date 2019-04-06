@@ -60,7 +60,7 @@ class AsyncReducer:
             StatsLevel.DETAILED: ident,
         }[self._stats_level]
         stats = self._stats.setdefault(key, AggregatedStats())
-        stats.consume(float(not created))
+        stats.consume(float(created))
 
     @staticmethod
     def _auto_ident(coro: Coroutine[Any, Any, T_Result]) -> str:

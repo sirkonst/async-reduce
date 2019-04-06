@@ -89,7 +89,7 @@ async def test_reducer_stats_overall():
 
     assert len(async_reduce._stats) == 1
     assert async_reduce._stats[None].n == 20
-    assert async_reduce._stats[None].mean == 9/10
+    assert async_reduce._stats[None].mean == 1/10
 
 
 async def test_reducer_stats_detailed():
@@ -114,4 +114,4 @@ async def test_reducer_stats_detailed():
     assert len(async_reduce._stats) == 2
     for stats in async_reduce._stats.values():
         assert stats.n == 10
-        assert stats.mean == 9 / 10
+        assert stats.mean == 1/10
