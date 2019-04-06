@@ -1,8 +1,11 @@
 import asyncio
+from enum import Enum
 import inspect
 import typing  # noqa
 from typing import Coroutine, Tuple, Any, TypeVar, Awaitable, Optional
 import sys
+
+from async_reduce.stats import AggregatedStats
 
 PY_VERSION = float(sys.version_info[0]) + sys.version_info[1] / 10
 
@@ -10,10 +13,17 @@ PY_VERSION = float(sys.version_info[0]) + sys.version_info[1] / 10
 T_Result = TypeVar('T_Result')
 
 
+class StatsLevel(Enum):
+    OVERALL = 1
+    DETAILED = 2
+
+
 class AsyncReducer:
 
-    def __init__(self) -> None:
+    def __init__(self, stats_level: StatsLevel = None) -> None:
         self._running = {}  # type: typing.Dict[str, asyncio.Future]
+        self._stats_level = stats_level
+        self._stats = {}    # type: typing.Dict[Optional[str], AggregatedStats]
 
     def __call__(
         self,
@@ -38,7 +48,19 @@ class AsyncReducer:
         else:
             coro.close()
 
+        self._add_stats(ident, created)
+
         return self._waiter(future)
+
+    def _add_stats(self, ident: str, created: bool):
+        if not self._stats_level:
+            return
+        key = {
+            StatsLevel.OVERALL: None,
+            StatsLevel.DETAILED: ident,
+        }[self._stats_level]
+        stats = self._stats.setdefault(key, AggregatedStats())
+        stats.consume(float(not created))
 
     @staticmethod
     def _auto_ident(coro: Coroutine[Any, Any, T_Result]) -> str:
