@@ -18,4 +18,5 @@
 !/examples/
 !/.coverage/.keep
 !/CHANGELOG.md
+!/CONTRIBUTORS.md
 *__pycache__*
