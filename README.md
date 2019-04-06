@@ -1,5 +1,5 @@
 [![Python versions](https://img.shields.io/badge/python-3.5%2C%203.6%2C%203.7-green.svg)]()
-[![PyPI version](https://badge.fury.io/py/async-reduce.svg)]()
+[![PyPI version](https://badge.fury.io/py/async-reduce.svg)](https://pypi.org/project/async-reduce/)
 [![coverage report](https://gitlab.com/sirkonst/async-reduce/badges/master/coverage.svg)]()
 
 

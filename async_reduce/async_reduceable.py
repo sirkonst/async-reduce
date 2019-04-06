@@ -1,7 +1,7 @@
 from functools import wraps
 from typing import Callable, TypeVar
 
-from async_reduce.async_reducer import AsyncReducer, async_reduce
+from async_reduce import async_reduce, AsyncReducer
 
 T_AsyncFunc = TypeVar('T_AsyncFunc')
 

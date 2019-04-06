@@ -61,7 +61,7 @@ def version(major=0, minor=None, patch=None, localversion='auto'):
     if patch:
         if patch == repo_version[2]:
             v = '{}.{}'.format(v, patch)
-        elif patch > repo_version[2]:
+        elif patch > (repo_version[2] or 0):
             is_dev = True
             v = '{}.{}'.format(v, patch)
         else:

@@ -1,7 +1,4 @@
-from .async_reducer import AsyncReducer
-from .async_reduceable import async_reduceable
+from async_reduce.async_reducer import async_reduce, AsyncReducer
+from async_reduce.async_reduceable import async_reduceable
 
-__all__ = 'async_reduce', 'async_reduceable',
-
-
-async_reduce = AsyncReducer()
+__all__ = 'async_reduce', 'async_reduceable', 'AsyncReducer',
