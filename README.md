@@ -106,6 +106,9 @@ same exception too
 * If single `coroutine` is stuck all aggregated `coroutine`s will stuck too. 
 Limit execution time for `coroutine` and add retries (optional) to avoid it.
 
+* Be careful when return mutable value from `coroutine` because single value 
+will shared. Prefer to use non-mutable value as coroutine return.
+
 
 Development
 -----------

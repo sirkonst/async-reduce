@@ -1,8 +1,10 @@
 import asyncio
 import inspect
+import sys
 import typing  # noqa
 from typing import Coroutine, Tuple, Any, TypeVar, Awaitable, Optional
-import sys
+
+from async_reduce.aux import get_coroutine_function_location
 
 PY_VERSION = float(sys.version_info[0]) + sys.version_info[1] / 10
 
@@ -42,7 +44,8 @@ class AsyncReducer:
 
     @staticmethod
     def _auto_ident(coro: Coroutine[Any, Any, T_Result]) -> str:
-        name = getattr(coro, '__qualname__', getattr(coro, '__name__'))
+        func_loc = get_coroutine_function_location(coro)
+
         try:
             hsh = hash(tuple(
                 inspect.getcoroutinelocals(coro).items()
@@ -55,7 +58,7 @@ class AsyncReducer:
                 ''.format(getattr(coro, '__name__'))
             )
 
-        return '_auto_ident:{}:{}'.format(name, hsh)
+        return '{}(<state_hash {}>)'.format(func_loc, hsh)
 
     def _get_or_create_future(self, ident: str) -> Tuple[asyncio.Future, bool]:
         f = self._running.get(ident, None)
@@ -69,7 +72,7 @@ class AsyncReducer:
     async def _runner(
         self,
         ident: str,
-        coro: Awaitable[T_Result],
+        coro: Coroutine[Any, Any, T_Result],
         future: asyncio.Future
     ) -> None:
         try:

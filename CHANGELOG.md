@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+0.1.2
+-----
+
+* Change coroutine auto identification
+* Add caveat about return value
+
+
 0.1.1
 -----
 
