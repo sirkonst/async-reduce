@@ -1,7 +1,9 @@
 import sys
 from typing import Coroutine
 
-_cached_sys_path = sorted(set(filter(None, sys.path)))
+_cached_sys_path = sorted(set(
+    path for path in sys.path if path and path != '/'
+))
 
 
 def get_coroutine_function_location(coro: Coroutine) -> str:
@@ -23,7 +25,7 @@ def get_coroutine_function_location(coro: Coroutine) -> str:
     if file_path:
         module_path = file_path.lstrip('/').rstrip('.py').replace('/', '.')
     else:
-        module_path = '~'
+        module_path = '<unknown module>'
 
     return '{}:{}'.format(
         module_path, getattr(coro, '__qualname__')
