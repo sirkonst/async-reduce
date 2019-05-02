@@ -100,7 +100,7 @@ async def handler_user_detail(request, user_id: int):
 Hooks
 -----
 
-Library supports hooks. Add-ons hooks:
+Library supports hooks. Add-on hooks:
 
 * **DebugHooks** - print about all triggered hooks
 * **StatisticsOverallHooks** - general statistics on the use of `async_reduce`
@@ -123,7 +123,7 @@ async def handler_user_detail(request, user_id: int):
 
 See more detail example in [examples/example_hooks.py](https://github.com/sirkonst/async-reduce/blob/master/examples/example_hooks.py).
 
-You can write custom hooks via inherit from [BaseHooks](https://github.com/sirkonst/async-reduce/blob/master/async_reduce/hooks/base.py)
+You can write custom hooks via inherit from [BaseHooks](https://github.com/sirkonst/async-reduce/blob/master/async_reduce/hooks/base.py).
 
 
 Caveats
