@@ -1,12 +1,12 @@
 import sys
-from typing import Coroutine
+from typing import Coroutine, Any
 
 _cached_sys_path = sorted(set(
     path for path in sys.path if path and path != '/'
 ))
 
 
-def get_coroutine_function_location(coro: Coroutine) -> str:
+def get_coroutine_function_location(coro: Coroutine[Any, Any, Any]) -> str:
     """
     Get relative location for coroutine function.
     """

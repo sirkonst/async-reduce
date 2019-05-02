@@ -1,5 +1,4 @@
-from collections import Counter
-from typing import Coroutine, Any
+from typing import Coroutine, Any, Counter
 
 from async_reduce.hooks.base import BaseHooks
 from async_reduce.aux import get_coroutine_function_location
@@ -15,43 +14,45 @@ class StatisticsOverallHooks(BaseHooks):
         * errors - count of raised errors from coroutines
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.total = 0
         self.executed = 0
         self.reduced = 0
         self.errors = 0
 
-    def __str__(self):
+    def __str__(self) -> str:
         return 'Stats(total={}, executed={}, reduced={}, errors={})'.format(
             self.total, self.executed, self.reduced, self.errors
         )
 
-    def on_apply_for(self, coro: Coroutine, ident: str) -> None:
+    def on_apply_for(self, coro: Coroutine[Any, Any, Any], ident: str) -> None:
         self.total += 1
 
     def on_result_for(
-        self, coro: Coroutine, ident: str, result: Any
+        self, coro: Coroutine[Any, Any, Any], ident: str, result: Any
     ) -> None:
         self.executed += 1
 
-    def on_reducing_for(self, coro: Coroutine, ident: str) -> None:
+    def on_reducing_for(
+        self, coro: Coroutine[Any, Any, Any], ident: str
+    ) -> None:
         self.reduced += 1
 
     def on_exception_for(
-        self, coro: Coroutine, ident: str, exception: Exception
+        self, coro: Coroutine[Any, Any, Any], ident: str, exception: Exception
     ) -> None:
         self.errors += 1
 
 
 class StatisticsDetailHooks(BaseHooks):
 
-    def __init__(self):
-        self.total = Counter()
-        self.executed = Counter()
-        self.reduced = Counter()
-        self.errors = Counter()
+    def __init__(self) -> None:
+        self.total = Counter[str]()
+        self.executed = Counter[str]()
+        self.reduced = Counter[str]()
+        self.errors = Counter[str]()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ''.join((
             'Top total:\n',
             ''.join(
@@ -75,16 +76,20 @@ class StatisticsDetailHooks(BaseHooks):
             )
         ))
 
-    def on_apply_for(self, coro: Coroutine, ident: str) -> None:
+    def on_apply_for(self, coro: Coroutine[Any, Any, Any], ident: str) -> None:
         self.total[get_coroutine_function_location(coro)] += 1
 
-    def on_executing_for(self, coro: Coroutine, ident: str) -> None:
+    def on_executing_for(
+        self, coro: Coroutine[Any, Any, Any], ident: str
+    ) -> None:
         self.executed[get_coroutine_function_location(coro)] += 1
 
-    def on_reducing_for(self, coro: Coroutine, ident: str) -> None:
+    def on_reducing_for(
+        self, coro: Coroutine[Any, Any, Any], ident: str
+    ) -> None:
         self.reduced[get_coroutine_function_location(coro)] += 1
 
     def on_exception_for(
-        self, coro: Coroutine, ident: str, exception: Exception
+        self, coro: Coroutine[Any, Any, Any], ident: str, exception: Exception
     ) -> None:
         self.errors[get_coroutine_function_location(coro)] += 1
