@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+0.2
+---
+
+* Add hooks mechanism
+
+
 0.1.2
 -----
 

@@ -97,6 +97,35 @@ async def handler_user_detail(request, user_id: int):
 ```
 
 
+Hooks
+-----
+
+Library supports hooks. Add-ons hooks:
+
+* **DebugHooks** - print about all triggered hooks
+* **StatisticsOverallHooks** - general statistics on the use of `async_reduce`
+* **StatisticsDetailHooks** - like `StatisticsOverallHooks` but detail statistics
+about all `coroutine` processed by `async_reduce`
+
+Example:
+
+```python
+from async_reduce import AsyncReducer
+from async_reduce.hooks import DebugHooks
+
+# define custom async_reduce with hooks
+async_reduce = AsyncReducer(hooks=DebugHooks())
+
+
+async def handler_user_detail(request, user_id: int):
+    user_data = await async_reduce(fetch_user_data(user_id))
+```
+
+See more detail example in [examples/example_hooks.py](https://github.com/sirkonst/async-reduce/blob/master/examples/example_hooks.py).
+
+You can write custom hooks via inherit from [BaseHooks](https://github.com/sirkonst/async-reduce/blob/master/async_reduce/hooks/base.py)
+
+
 Caveats
 -------
 

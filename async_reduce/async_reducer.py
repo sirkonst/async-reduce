@@ -5,6 +5,7 @@ import typing  # noqa
 from typing import Coroutine, Tuple, Any, TypeVar, Awaitable, Optional
 
 from async_reduce.aux import get_coroutine_function_location
+from async_reduce.hooks.base import BaseHooks
 
 PY_VERSION = float(sys.version_info[0]) + sys.version_info[1] / 10
 
@@ -14,8 +15,9 @@ T_Result = TypeVar('T_Result')
 
 class AsyncReducer:
 
-    def __init__(self) -> None:
+    def __init__(self, hooks: Optional[BaseHooks] = None) -> None:
         self._running = {}  # type: typing.Dict[str, asyncio.Future]
+        self._hooks = hooks
 
     def __call__(
         self,
@@ -28,17 +30,28 @@ class AsyncReducer:
         if not ident:
             ident = self._auto_ident(coro)
 
+        if self._hooks:
+            self._hooks.on_apply_for(coro, ident)
+
         future, created = self._get_or_create_future(ident)
 
         if created:
             self._running[ident] = future
             coro_runner = self._runner(ident, coro, future)
+
+            if self._hooks:
+                self._hooks.on_executing_for(coro, ident)
+
             if PY_VERSION >= 3.7:
                 asyncio.create_task(coro_runner)
             else:
                 asyncio.ensure_future(coro_runner)
         else:
+            if self._hooks:
+                self._hooks.on_reducing_for(coro, ident)
+
             coro.close()
+            del coro
 
         return self._waiter(future)
 
@@ -58,7 +71,7 @@ class AsyncReducer:
                 ''.format(getattr(coro, '__name__'))
             )
 
-        return '{}(<state_hash {}>)'.format(func_loc, hsh)
+        return '{}(<state_hash:{}>)'.format(func_loc, hsh)
 
     def _get_or_create_future(self, ident: str) -> Tuple[asyncio.Future, bool]:
         f = self._running.get(ident, None)
@@ -79,8 +92,14 @@ class AsyncReducer:
             result = await coro
         except Exception as e:
             future.set_exception(e)
+
+            if self._hooks:
+                self._hooks.on_exception_for(coro, ident, e)
         else:
             future.set_result(result)
+
+            if self._hooks:
+                self._hooks.on_result_for(coro, ident, result)
         finally:
             del self._running[ident]
 

@@ -6,6 +6,14 @@ import pytest
 from async_reduce.aux import get_coroutine_function_location
 
 
+def teardown_module(module):
+    """
+    Reload ``async_reduce.aux`` for reset module caches after tests
+    """
+    from async_reduce import aux
+    importlib.reload(aux)
+
+
 async def coro_function():
     pass
 
