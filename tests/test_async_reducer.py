@@ -5,6 +5,8 @@ from asynctest import CoroutineMock
 
 from async_reduce import async_reduce
 
+pytestmark = pytest.mark.asyncio
+
 
 @pytest.mark.parametrize('count', [
     1, 2, 5, 10, 100, 1000

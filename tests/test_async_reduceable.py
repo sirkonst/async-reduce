@@ -1,9 +1,12 @@
 import asyncio
 
+import pytest
 from asynctest import CoroutineMock
 
 from async_reduce import async_reduceable
 from async_reduce.async_reducer import AsyncReducer
+
+pytestmark = pytest.mark.asyncio
 
 
 async def test_decorator_default():

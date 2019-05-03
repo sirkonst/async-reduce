@@ -1,7 +1,11 @@
 import asyncio
 
+import pytest
+
 from async_reduce import AsyncReducer
 from async_reduce.hooks import StatisticsDetailHooks
+
+pytestmark = pytest.mark.asyncio
 
 
 async def test():

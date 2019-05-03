@@ -5,6 +5,8 @@ import pytest
 
 from async_reduce.aux import get_coroutine_function_location
 
+pytestmark = pytest.mark.asyncio
+
 
 def teardown_module(module):
     """

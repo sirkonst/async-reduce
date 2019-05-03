@@ -8,6 +8,8 @@ import pytest
 from async_reduce import AsyncReducer
 from async_reduce.hooks import DebugHooks
 
+pytestmark = pytest.mark.asyncio
+
 
 async def test_debug_hooks():
     stream = StringIO()
