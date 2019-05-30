@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+0.2.1
+-----
+
+* Protect reduced coroutine from cancelling 
+
+
 0.2
 ---
 

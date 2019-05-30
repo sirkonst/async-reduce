@@ -2,6 +2,7 @@ import asyncio
 import inspect
 import sys
 import typing  # noqa
+from functools import partial
 from typing import Coroutine, Tuple, Any, TypeVar, Awaitable, Optional
 
 from async_reduce.aux import get_coroutine_function_location
@@ -103,13 +104,29 @@ class AsyncReducer:
         finally:
             del self._running[ident]
 
-    @staticmethod
-    async def _waiter(future: asyncio.Future) -> T_Result:
+    @classmethod
+    async def _waiter(cls, future: asyncio.Future) -> T_Result:
+        wait_future = asyncio.Future()  # type: asyncio.Future
+
+        future.add_done_callback(partial(
+            cls._set_wait_future_result, wait_future=wait_future
+        ))
+
         if PY_VERSION >= 3.7:
-            return await future
+            return await wait_future
         else:
-            await asyncio.wait_for(future, timeout=None)
-            return future.result()
+            await asyncio.wait_for(wait_future, timeout=None)
+            return wait_future.result()
+
+    @staticmethod
+    def _set_wait_future_result(
+        result_future: asyncio.Future, wait_future: asyncio.Future
+    ) -> None:
+        exc = result_future.exception()
+        if exc is not None:
+            wait_future.set_exception(exc)
+
+        wait_future.set_result(result_future.result())
 
 
 async_reduce = AsyncReducer()

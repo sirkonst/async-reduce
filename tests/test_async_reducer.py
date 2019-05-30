@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import suppress
 
 import pytest
 from asynctest import CoroutineMock
@@ -111,4 +112,19 @@ async def test_ident(value):
     result = await async_reduce(
         coro, ident='foo_{}'.format(id(value))
     )
+    assert result == 'result'
+
+
+async def test_prevent_cancelling():
+    async def foo():
+        await asyncio.sleep(2)
+        return 'result'
+
+    coro_1 = async_reduce(foo())
+    coro_2 = async_reduce(foo())
+
+    with suppress(asyncio.TimeoutError):
+        await asyncio.wait_for(coro_1, 1)
+
+    result = await coro_2
     assert result == 'result'
