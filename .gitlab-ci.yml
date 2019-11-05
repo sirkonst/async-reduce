@@ -32,6 +32,11 @@ test_3.7:
   variables:
     PYTHON_VERSION: '3.7'
 
+test_3.8:
+  <<: *test_template
+  variables:
+    PYTHON_VERSION: '3.8'
+
 
 # -- Test Post ----------------------------------------------------------------
 
@@ -46,6 +51,7 @@ coverage:
     - test_3.5
     - test_3.6
     - test_3.7
+    - test_3.8
   coverage: '/TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+[.]\d+?)\%/'
   artifacts:
     paths:

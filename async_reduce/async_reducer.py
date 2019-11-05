@@ -91,7 +91,7 @@ class AsyncReducer:
     ) -> None:
         try:
             result = await coro
-        except Exception as e:
+        except (Exception, asyncio.CancelledError) as e:
             future.set_exception(e)
 
             if self._hooks:

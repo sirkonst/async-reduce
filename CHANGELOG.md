@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.3
+---
+
+* Add support python 3.8
+
 
 0.2.1
 -----
