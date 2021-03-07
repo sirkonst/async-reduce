@@ -1,7 +1,8 @@
-from typing import Coroutine, Any, Counter
+from asyncio import CancelledError
+from typing import Any, Coroutine, Counter, Union
 
-from async_reduce.hooks.base import BaseHooks
 from async_reduce.aux import get_coroutine_function_location
+from async_reduce.hooks.base import BaseHooks
 
 
 class StatisticsOverallHooks(BaseHooks):
@@ -39,7 +40,8 @@ class StatisticsOverallHooks(BaseHooks):
         self.reduced += 1
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str, exception: Exception
+        self, coro: Coroutine[Any, Any, Any], ident: str,
+        exception: Union[Exception, CancelledError]
     ) -> None:
         self.errors += 1
 
@@ -90,6 +92,7 @@ class StatisticsDetailHooks(BaseHooks):
         self.reduced[get_coroutine_function_location(coro)] += 1
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str, exception: Exception
+        self, coro: Coroutine[Any, Any, Any], ident: str,
+        exception: Union[Exception, CancelledError]
     ) -> None:
         self.errors[get_coroutine_function_location(coro)] += 1

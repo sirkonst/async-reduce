@@ -1,5 +1,6 @@
 import sys
-from typing import Coroutine, Any, IO
+from asyncio import CancelledError
+from typing import IO, Any, Coroutine, Union
 
 from async_reduce.hooks.base import BaseHooks
 
@@ -43,7 +44,8 @@ class DebugHooks(BaseHooks):
         )
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str, exception: Exception
+        self, coro: Coroutine[Any, Any, Any], ident: str,
+        exception: Union[Exception, CancelledError]
     ) -> None:
         print(
             '[{}] get exception for {}: {}'.format(ident, coro, exception),

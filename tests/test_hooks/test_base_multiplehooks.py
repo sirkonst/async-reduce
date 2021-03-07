@@ -1,5 +1,6 @@
-from typing import Coroutine, Any
+from asyncio import CancelledError
 from collections import Counter
+from typing import Any, Coroutine, Union
 
 import pytest
 
@@ -77,7 +78,8 @@ class CounterHooks(BaseHooks):
         self.calls_counter['on_result_for'] += 1
 
     def on_exception_for(
-        self, coro: Coroutine, ident: str, exception: Exception
+        self, coro: Coroutine, ident: str,
+        exception: Union[Exception, CancelledError]
     ) -> None:
         self.calls_counter['on_exception_for'] += 1
 

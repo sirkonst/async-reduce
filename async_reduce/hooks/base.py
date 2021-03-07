@@ -1,4 +1,5 @@
-from typing import Coroutine, Any
+from asyncio import CancelledError
+from typing import Any, Coroutine, Union
 
 
 class BaseHooks:
@@ -33,7 +34,8 @@ class BaseHooks:
         """
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str, exception: Exception
+        self, coro: Coroutine[Any, Any, Any], ident: str,
+        exception: Union[Exception, CancelledError]
     ) -> None:
         """
         Calls when aggregated coroutine raises exception.
@@ -91,7 +93,8 @@ class MultipleHooks(BaseHooks):
             hooks.on_result_for(coro, ident, result)
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str, exception: Exception
+        self, coro: Coroutine[Any, Any, Any], ident: str,
+        exception: Union[Exception, CancelledError]
     ) -> None:
         for hooks in self.hooks_list:
             hooks.on_exception_for(coro, ident, exception)
