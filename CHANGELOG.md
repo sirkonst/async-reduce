@@ -1,6 +1,13 @@
 Changelog
 =========
 
+
+0.4.1
+-----
+
+* Just updated README.md and tox.ini
+
+
 0.4
 ---
 
