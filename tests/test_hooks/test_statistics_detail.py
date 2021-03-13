@@ -26,7 +26,7 @@ async def test():
         async_reduce(foo_error()),
     ]
 
-    await asyncio.wait(coros)
+    await asyncio.gather(*coros, return_exceptions=True)
 
     assert stats.total == {
         'tests.test_hooks.test_statistics_detail:test.<locals>.foo': 3,

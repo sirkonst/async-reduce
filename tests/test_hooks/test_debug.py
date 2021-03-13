@@ -29,7 +29,7 @@ async def test_debug_hooks():
         async_reduce(foo_error()),
     ]
 
-    await asyncio.wait(coros)
+    await asyncio.gather(*coros, return_exceptions=True)
 
     lines = stream.getvalue().splitlines()
     assert len(lines) == 11
@@ -128,7 +128,7 @@ async def test_debug_hooks_default():
         async_reduce(foo(2)),
     ]
 
-    await asyncio.wait(coros)
+    await asyncio.gather(*coros)
 
 
 @pytest.mark.parametrize('stream', [
@@ -147,4 +147,4 @@ async def test_debug_hooks_stream(stream):
         async_reduce(foo(2)),
     ]
 
-    await asyncio.wait(coros)
+    await asyncio.gather(*coros)

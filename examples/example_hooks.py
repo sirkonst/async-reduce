@@ -22,8 +22,7 @@ async def amain():
     coros = [
         foo(random.randint(1, 3)) for _ in range(5)
     ]
-
-    await asyncio.wait(coros)
+    await asyncio.gather(*coros)
 
     print('--- Overall stats ---')
     print(stats_overall)

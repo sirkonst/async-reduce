@@ -11,47 +11,32 @@ async def fetch(url):
 
 
 async def amain():
+    print('-- First simultaneous run')
     coros = [
         async_reduce(fetch('/page')) for _ in range(10)
     ]
-
-    print('-- First simultaneous run')
-    done, pending = await asyncio.wait(coros)
-    assert not pending
+    results = await asyncio.gather(*coros)
 
     print('Results:')
-    for f in done:
-        print(
-            await f
-        )
+    print('\n'.join(map(str, results)))
 
     print('-- Second simultaneous run')
     coros = [
         async_reduce(fetch('/page')) for _ in range(10)
     ]
-
-    done, pending = await asyncio.wait(coros)
-    assert not pending
+    results = await asyncio.gather(*coros)
 
     print('Results:')
-    for f in done:
-        print(
-            await f
-        )
+    print('\n'.join(map(str, results)))
 
     print('-- Third simultaneous run with differences')
     coros = [
         async_reduce(fetch('/page/{}'.format(i))) for i in range(10)
     ]
-
-    done, pending = await asyncio.wait(coros)
-    assert not pending
+    results = await asyncio.gather(*coros)
 
     print('Results:')
-    for f in done:
-        print(
-            await f
-        )
+    print('\n'.join(map(str, results)))
 
 
 def main():

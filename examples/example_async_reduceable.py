@@ -12,18 +12,14 @@ async def fetch(url):
 
 
 async def amain():
+    print('-- Simultaneous run')
     coros = [
         fetch('/page') for _ in range(10)
     ]
-
-    print('-- Simultaneous run')
-    done, pending = await asyncio.wait(coros)
+    results = await asyncio.gather(*coros)
 
     print('Results:')
-    for f in done:
-        print(
-            await f
-        )
+    print('\n'.join(map(str, results)))
 
 
 def main():

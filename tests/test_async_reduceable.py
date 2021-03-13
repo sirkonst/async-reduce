@@ -26,10 +26,10 @@ async def test_decorator_default():
         foo('arg', kw='kw'),
         foo('arg', kw='kw')
     ]
-    done, pending = await asyncio.wait(coros)
-    assert not pending
+    results = await asyncio.gather(*coros)
+
     mock.assert_awaited_once_with('arg', kw='kw')
-    assert all(f.result() == 'result arg kw' for f in done)
+    assert all(res == 'result arg kw' for res in results)
 
 
 async def test_decorator_with_arg():
@@ -51,7 +51,7 @@ async def test_decorator_with_arg():
         foo('arg', kw='kw'),
         foo('arg', kw='kw')
     ]
-    done, pending = await asyncio.wait(coros)
-    assert not pending
+    results = await asyncio.gather(*coros)
+
     mock.assert_awaited_once_with('arg', kw='kw')
-    assert all(f.result() == 'result arg kw' for f in done)
+    assert all(r == 'result arg kw' for r in results)

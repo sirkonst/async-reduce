@@ -23,25 +23,23 @@ async def test_simultaneity(count, args, kwargs):
     mock = CoroutineMock(return_value=result)
 
     coros_1 = [
-        async_reduce(mock(*args, **kwargs))
-        for _ in range(count)
+        async_reduce(mock(*args, **kwargs)) for _ in range(count)
     ]
 
-    done_1, pending_1 = await asyncio.wait(coros_1)
-    assert not pending_1
+    results = await asyncio.gather(*coros_1)
+
     mock.assert_awaited_once_with(*args, **kwargs)
-    assert all(f.result() == result for f in done_1)
+    assert all(res == result for res in results)
 
     coros_2 = [
-        async_reduce(mock(*args, **kwargs))
-        for _ in range(count)
+        async_reduce(mock(*args, **kwargs)) for _ in range(count)
     ]
 
-    done_2, pending_2 = await asyncio.wait(coros_2)
-    assert not pending_2
+    results = await asyncio.gather(*coros_2)
+
     mock.assert_any_await(*args, **kwargs)
     assert mock.await_count == 2
-    assert all(f.result() == result for f in done_2)
+    assert all(res == result for res in results)
 
 
 class MyTestError(Exception):
@@ -58,37 +56,29 @@ async def test_simultaneity_raise(count, error):
     mock = CoroutineMock(side_effect=error('test error'))
 
     coros_1 = [
-        async_reduce(mock())
-        for _ in range(count)
+        async_reduce(mock()) for _ in range(count)
     ]
 
-    done_1, pending_1 = await asyncio.wait(coros_1)
-    assert not pending_1
+    results = await asyncio.gather(*coros_1, return_exceptions=True)
+
     mock.assert_awaited_once_with()
-
-    for f in done_1:
-        with pytest.raises(error) as e:
-            await f
-
-        if not isinstance(e.value, asyncio.CancelledError):
-            assert str(e.value) == 'test error'
+    for res in results:
+        assert isinstance(res, error)
+        if not isinstance(res, asyncio.CancelledError):
+            assert str(res) == 'test error'
 
     coros_2 = [
-        async_reduce(mock())
-        for _ in range(count)
+        async_reduce(mock()) for _ in range(count)
     ]
 
-    done_2, pending_2 = await asyncio.wait(coros_2)
-    assert not pending_2
+    results = await asyncio.gather(*coros_2, return_exceptions=True)
+
     mock.assert_any_await()
     assert mock.await_count == 2
-
-    for f in done_1:
-        with pytest.raises(error) as e:
-            await f
-
-        if not isinstance(e.value, asyncio.CancelledError):
-            assert str(e.value) == 'test error'
+    for res in results:
+        assert isinstance(res, error)
+        if not isinstance(res, asyncio.CancelledError):
+            assert str(res) == 'test error'
 
 
 @pytest.mark.parametrize('value', [

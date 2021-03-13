@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.4
+---
+
+* Add support python 3.9
+
+
 0.3
 ---
 
@@ -10,7 +16,7 @@ Changelog
 0.2.1
 -----
 
-* Protect reduced coroutine from cancelling 
+* Protect reduced coroutine from cancelling
 
 
 0.2
