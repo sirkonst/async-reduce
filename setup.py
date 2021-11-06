@@ -11,5 +11,5 @@ setup(
     setup_requires=[
         'setuptools >= 30.4'
     ],
-    version=version(0, 4, 1, localversion=localversion),
+    version=version(0, 5, localversion=localversion),
 )
