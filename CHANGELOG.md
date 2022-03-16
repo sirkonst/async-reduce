@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.0
+---
+
+* Drop support python's 3.5 and 3.6
+* Migrate pylava -> pylama
+* Fix a running of tests
+
 0.5
 ---
 

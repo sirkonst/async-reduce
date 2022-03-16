@@ -17,16 +17,6 @@ stages:
     paths:
       - .coverage/data*
 
-test_3.5:
-  <<: *test_template
-  variables:
-    PYTHON_VERSION: '3.5'
-
-test_3.6:
-  <<: *test_template
-  variables:
-    PYTHON_VERSION: '3.6'
-
 test_3.7:
   <<: *test_template
   variables:
@@ -58,8 +48,6 @@ coverage:
   script:
     - tox -e coverage_report
   dependencies:
-    - test_3.5
-    - test_3.6
     - test_3.7
     - test_3.8
     - test_3.9

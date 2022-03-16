@@ -1,15 +1,11 @@
 import asyncio
 import inspect
-import sys
 import typing  # noqa
 from functools import partial
 from typing import Coroutine, Tuple, Any, TypeVar, Awaitable, Optional
 
 from async_reduce.aux import get_coroutine_function_location
 from async_reduce.hooks.base import BaseHooks
-
-PY_VERSION = float(sys.version_info[0]) + sys.version_info[1] / 10
-
 
 T_Result = TypeVar('T_Result')
 
@@ -43,10 +39,7 @@ class AsyncReducer:
             if self._hooks:
                 self._hooks.on_executing_for(coro, ident)
 
-            if PY_VERSION >= 3.7:
-                asyncio.create_task(coro_runner)
-            else:
-                asyncio.ensure_future(coro_runner)
+            asyncio.create_task(coro_runner)
         else:
             if self._hooks:
                 self._hooks.on_reducing_for(coro, ident)
@@ -112,11 +105,7 @@ class AsyncReducer:
             cls._set_wait_future_result, wait_future=wait_future
         ))
 
-        if PY_VERSION >= 3.7:
-            return await wait_future
-        else:
-            await asyncio.wait_for(wait_future, timeout=None)
-            return wait_future.result()
+        return await wait_future
 
     @staticmethod
     def _set_wait_future_result(

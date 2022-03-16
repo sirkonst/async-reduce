@@ -1,4 +1,4 @@
-[![Python versions](https://img.shields.io/badge/python-3.5%2C%203.6%2C%203.7%2C%203.8%2C%203.9%2C%203.10-green.svg)]()
+[![Python versions](https://img.shields.io/badge/python-3.7%2C%203.8%2C%203.9%2C%203.10-green.svg)]()
 [![PyPI version](https://badge.fury.io/py/async-reduce.svg)](https://pypi.org/project/async-reduce/)
 
 

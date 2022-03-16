@@ -36,7 +36,7 @@ def _get_git_version():
     return major, minor, patch, dev, localversion
 
 
-# pylava:ignore=C901
+# pylama:ignore=C901
 def version(major=0, minor=None, patch=None, localversion='auto'):
     repo_version = _get_git_version()
     is_dev = False
