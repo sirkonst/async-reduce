@@ -118,3 +118,26 @@ async def test_prevent_cancelling():
 
     result = await coro_2
     assert result == 'result'
+
+
+async def test_all_waiters_cancelled(caplog):
+    caplog.set_level('ERROR', logger='asyncio')
+
+    async def foo():
+        await asyncio.sleep(1)
+        return 'result'
+
+    coro_1 = async_reduce(foo())
+    coro_2 = async_reduce(foo())
+
+    gather = asyncio.gather(coro_1, coro_2)
+    try:
+        await asyncio.wait_for(gather, 1)
+    except asyncio.TimeoutError:
+        with suppress(asyncio.CancelledError):
+            await gather
+
+        # check for "asyncio.base_futures.InvalidStateError: invalid state"
+        assert 'invalid state' not in caplog.text
+    else:
+        assert False

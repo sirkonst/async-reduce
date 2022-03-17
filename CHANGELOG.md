@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1
+---
+
+* Fix for InvalidStateError
+
 1.0
 ---
 

@@ -111,10 +111,17 @@ class AsyncReducer:
     def _set_wait_future_result(
         result_future: asyncio.Future, wait_future: asyncio.Future
     ) -> None:
+        if wait_future.cancelled():
+            return
+
         try:
-            wait_future.set_result(result_future.result())
+            result = result_future.result()
+            set_func = wait_future.set_result
         except (Exception, asyncio.CancelledError) as e:
-            wait_future.set_exception(e)
+            result = e
+            set_func = wait_future.set_exception
+
+        set_func(result)
 
 
 async_reduce = AsyncReducer()
