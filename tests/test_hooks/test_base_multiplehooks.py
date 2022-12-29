@@ -59,7 +59,6 @@ def test_multiple_init(count):
 
 
 class CounterHooks(BaseHooks):
-
     def __init__(self):
         self.calls_counter = Counter()
 
@@ -72,14 +71,14 @@ class CounterHooks(BaseHooks):
     def on_reducing_for(self, coro: Coroutine, ident: str) -> None:
         self.calls_counter['on_reducing_for'] += 1
 
-    def on_result_for(
-        self, coro: Coroutine, ident: str, result: Any
-    ) -> None:
+    def on_result_for(self, coro: Coroutine, ident: str, result: Any) -> None:
         self.calls_counter['on_result_for'] += 1
 
     def on_exception_for(
-        self, coro: Coroutine, ident: str,
-        exception: Union[Exception, CancelledError]
+        self,
+        coro: Coroutine,
+        ident: str,
+        exception: Union[Exception, CancelledError],
     ) -> None:
         self.calls_counter['on_exception_for'] += 1
 

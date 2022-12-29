@@ -9,7 +9,6 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test():
-
     async def foo(arg):
         return arg
 

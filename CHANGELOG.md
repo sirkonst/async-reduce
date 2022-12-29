@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.2
+---
+
+* Add support python 3.11
+* Update dependencies
+
 1.1
 ---
 

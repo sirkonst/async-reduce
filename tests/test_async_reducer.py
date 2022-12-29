@@ -2,42 +2,33 @@ import asyncio
 from contextlib import suppress
 
 import pytest
-from asynctest import CoroutineMock
 
 from async_reduce import async_reduce
 
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.mark.parametrize('count', [
-    1, 2, 5, 10, 100, 1000
-])
-@pytest.mark.parametrize('args', [
-    (), (1,), ('1',), (1, '1'), (1, '1', None)
-])
-@pytest.mark.parametrize('kwargs', [
-    {}, {'1': 1}, {'1': '1'}, {'1': 1, '2': '2'}, {'1': 1, '2': '2', '3': None}
-])
-async def test_simultaneity(count, args, kwargs):
+@pytest.mark.parametrize('count', [1, 2, 5, 10, 100, 1000])
+async def test_simultaneity(count):
     result = object()
-    mock = CoroutineMock(return_value=result)
 
-    coros_1 = [
-        async_reduce(mock(*args, **kwargs)) for _ in range(count)
-    ]
+    async def mock(a, b, *, c):
+        mock.await_count += 1
+        return result
+
+    mock.await_count = 0
+
+    coros_1 = [async_reduce(mock(1, 2, c=3)) for _ in range(count)]
 
     results = await asyncio.gather(*coros_1)
 
-    mock.assert_awaited_once_with(*args, **kwargs)
+    # mock.assert_awaited_once_with(*args, **kwargs)
     assert all(res == result for res in results)
 
-    coros_2 = [
-        async_reduce(mock(*args, **kwargs)) for _ in range(count)
-    ]
+    coros_2 = [async_reduce(mock(1, 2, c=3)) for _ in range(count)]
 
     results = await asyncio.gather(*coros_2)
 
-    mock.assert_any_await(*args, **kwargs)
     assert mock.await_count == 2
     assert all(res == result for res in results)
 
@@ -46,34 +37,46 @@ class MyTestError(Exception):
     pass
 
 
-@pytest.mark.parametrize('count', [
-    1, 2, 5, 10, 100,  # 1000
-])
-@pytest.mark.parametrize('error', [
-    MyTestError, Exception, asyncio.TimeoutError, asyncio.CancelledError,
-])
+@pytest.mark.parametrize(
+    'count',
+    [
+        1,
+        2,
+        5,
+        10,
+        100,  # 1000
+    ],
+)
+@pytest.mark.parametrize(
+    'error',
+    [
+        MyTestError,
+        Exception,
+        asyncio.TimeoutError,
+        asyncio.CancelledError,
+    ],
+)
 async def test_simultaneity_raise(count, error):
-    mock = CoroutineMock(side_effect=error('test error'))
+    async def mock():
+        mock.await_count += 1
+        raise error('test error')
 
-    coros_1 = [
-        async_reduce(mock()) for _ in range(count)
-    ]
+    mock.await_count = 0
+
+    coros_1 = [async_reduce(mock()) for _ in range(count)]
 
     results = await asyncio.gather(*coros_1, return_exceptions=True)
 
-    mock.assert_awaited_once_with()
+    assert mock.await_count == 1
     for res in results:
         assert isinstance(res, error)
         if not isinstance(res, asyncio.CancelledError):
             assert str(res) == 'test error'
 
-    coros_2 = [
-        async_reduce(mock()) for _ in range(count)
-    ]
+    coros_2 = [async_reduce(mock()) for _ in range(count)]
 
     results = await asyncio.gather(*coros_2, return_exceptions=True)
 
-    mock.assert_any_await()
     assert mock.await_count == 2
     for res in results:
         assert isinstance(res, error)
@@ -81,9 +84,9 @@ async def test_simultaneity_raise(count, error):
             assert str(res) == 'test error'
 
 
-@pytest.mark.parametrize('value', [
-    {}, {'a': 'b'}, object(), type('MyClass', (), {})
-])
+@pytest.mark.parametrize(
+    'value', [{}, {'a': 'b'}, object(), type('MyClass', (), {})]
+)
 async def test_ident(value):
     async def foo(arg):
         return 'result'
@@ -99,9 +102,7 @@ async def test_ident(value):
         '\n\tawait async_reduce(foo(...), ident="YOU-IDENT-FOR-THAT")'
     )
 
-    result = await async_reduce(
-        coro, ident='foo_{}'.format(id(value))
-    )
+    result = await async_reduce(coro, ident='foo_{}'.format(id(value)))
     assert result == 'result'
 
 

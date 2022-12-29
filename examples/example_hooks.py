@@ -4,7 +4,9 @@ import time
 
 from async_reduce import AsyncReducer, async_reduceable
 from async_reduce.hooks import (
-    DebugHooks, StatisticsOverallHooks, StatisticsDetailHooks
+    DebugHooks,
+    StatisticsOverallHooks,
+    StatisticsDetailHooks,
 )
 
 stats_overall = StatisticsOverallHooks()

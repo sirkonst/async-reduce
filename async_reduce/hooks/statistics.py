@@ -40,14 +40,15 @@ class StatisticsOverallHooks(BaseHooks):
         self.reduced += 1
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str,
-        exception: Union[Exception, CancelledError]
+        self,
+        coro: Coroutine[Any, Any, Any],
+        ident: str,
+        exception: Union[Exception, CancelledError],
     ) -> None:
         self.errors += 1
 
 
 class StatisticsDetailHooks(BaseHooks):
-
     def __init__(self) -> None:
         self.total = Counter[str]()
         self.executed = Counter[str]()
@@ -55,28 +56,30 @@ class StatisticsDetailHooks(BaseHooks):
         self.errors = Counter[str]()
 
     def __str__(self) -> str:
-        return ''.join((
-            'Top total:\n',
-            ''.join(
-                '\t{}: {}\n'.format(name, count)
-                for name, count in self.total.most_common()
-            ),
-            'Top executed:\n',
-            ''.join(
-                '\t{}: {}\n'.format(name, count)
-                for name, count in self.executed.most_common()
-            ),
-            'Top reduced:\n',
-            ''.join(
-                '\t{}: {}\n'.format(name, count)
-                for name, count in self.reduced.most_common()
-            ),
-            'Top errors:\n',
-            ''.join(
-                '\t{}: {}\n'.format(name, count)
-                for name, count in self.errors.most_common()
+        return ''.join(
+            (
+                'Top total:\n',
+                ''.join(
+                    '\t{}: {}\n'.format(name, count)
+                    for name, count in self.total.most_common()
+                ),
+                'Top executed:\n',
+                ''.join(
+                    '\t{}: {}\n'.format(name, count)
+                    for name, count in self.executed.most_common()
+                ),
+                'Top reduced:\n',
+                ''.join(
+                    '\t{}: {}\n'.format(name, count)
+                    for name, count in self.reduced.most_common()
+                ),
+                'Top errors:\n',
+                ''.join(
+                    '\t{}: {}\n'.format(name, count)
+                    for name, count in self.errors.most_common()
+                ),
             )
-        ))
+        )
 
     def on_apply_for(self, coro: Coroutine[Any, Any, Any], ident: str) -> None:
         self.total[get_coroutine_function_location(coro)] += 1
@@ -92,7 +95,9 @@ class StatisticsDetailHooks(BaseHooks):
         self.reduced[get_coroutine_function_location(coro)] += 1
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str,
-        exception: Union[Exception, CancelledError]
+        self,
+        coro: Coroutine[Any, Any, Any],
+        ident: str,
+        exception: Union[Exception, CancelledError],
     ) -> None:
         self.errors[get_coroutine_function_location(coro)] += 1

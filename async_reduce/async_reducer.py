@@ -1,8 +1,7 @@
 import asyncio
 import inspect
-import typing  # noqa
 from functools import partial
-from typing import Coroutine, Tuple, Any, TypeVar, Awaitable, Optional
+from typing import Coroutine, Tuple, Any, TypeVar, Awaitable, Optional, Dict
 
 from async_reduce.aux import get_coroutine_function_location
 from async_reduce.hooks.base import BaseHooks
@@ -11,9 +10,8 @@ T_Result = TypeVar('T_Result')
 
 
 class AsyncReducer:
-
     def __init__(self, hooks: Optional[BaseHooks] = None) -> None:
-        self._running = {}  # type: typing.Dict[str, asyncio.Future]
+        self._running: Dict[str, asyncio.Future] = {}
         self._hooks = hooks
 
     def __call__(
@@ -54,9 +52,7 @@ class AsyncReducer:
         func_loc = get_coroutine_function_location(coro)
 
         try:
-            hsh = hash(tuple(
-                inspect.getcoroutinelocals(coro).items()
-            ))
+            hsh = hash(tuple(inspect.getcoroutinelocals(coro).items()))
         except TypeError:
             raise TypeError(
                 'Unable to auto calculate identity for coroutine because using'
@@ -80,7 +76,7 @@ class AsyncReducer:
         self,
         ident: str,
         coro: Coroutine[Any, Any, T_Result],
-        future: asyncio.Future
+        future: asyncio.Future,
     ) -> None:
         try:
             result = await coro
@@ -99,11 +95,11 @@ class AsyncReducer:
 
     @classmethod
     async def _waiter(cls, future: asyncio.Future) -> T_Result:
-        wait_future = asyncio.Future()  # type: asyncio.Future
+        wait_future: asyncio.Future = asyncio.Future()
 
-        future.add_done_callback(partial(
-            cls._set_wait_future_result, wait_future=wait_future
-        ))
+        future.add_done_callback(
+            partial(cls._set_wait_future_result, wait_future=wait_future)
+        )
 
         return await wait_future
 

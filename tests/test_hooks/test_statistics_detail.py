@@ -9,7 +9,6 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test():
-
     async def foo(arg):
         return arg
 
@@ -30,11 +29,11 @@ async def test():
 
     assert stats.total == {
         'tests.test_hooks.test_statistics_detail:test.<locals>.foo': 3,
-        'tests.test_hooks.test_statistics_detail:test.<locals>.foo_error': 1
+        'tests.test_hooks.test_statistics_detail:test.<locals>.foo_error': 1,
     }
     assert stats.executed == {
         'tests.test_hooks.test_statistics_detail:test.<locals>.foo': 2,
-        'tests.test_hooks.test_statistics_detail:test.<locals>.foo_error': 1
+        'tests.test_hooks.test_statistics_detail:test.<locals>.foo_error': 1,
     }
     assert stats.reduced == {
         'tests.test_hooks.test_statistics_detail:test.<locals>.foo': 1
@@ -43,7 +42,8 @@ async def test():
         'tests.test_hooks.test_statistics_detail:test.<locals>.foo_error': 1
     }
 
-    assert str(stats) == ('''\
+    assert str(stats) == (
+        """\
 Top total:
 \ttests.test_hooks.test_statistics_detail:test.<locals>.foo: 3
 \ttests.test_hooks.test_statistics_detail:test.<locals>.foo_error: 1
@@ -54,4 +54,5 @@ Top reduced:
 \ttests.test_hooks.test_statistics_detail:test.<locals>.foo: 1
 Top errors:
 \ttests.test_hooks.test_statistics_detail:test.<locals>.foo_error: 1
-''')
+"""
+    )

@@ -34,8 +34,10 @@ class BaseHooks:
         """
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str,
-        exception: Union[Exception, CancelledError]
+        self,
+        coro: Coroutine[Any, Any, Any],
+        ident: str,
+        exception: Union[Exception, CancelledError],
     ) -> None:
         """
         Calls when aggregated coroutine raises exception.
@@ -67,7 +69,7 @@ class MultipleHooks(BaseHooks):
         return self
 
     def __len__(self) -> int:
-        """ Count of gathered hooks """
+        """Count of gathered hooks"""
         return len(self.hooks_list)
 
     def on_apply_for(self, coro: Coroutine[Any, Any, Any], ident: str) -> None:
@@ -93,8 +95,10 @@ class MultipleHooks(BaseHooks):
             hooks.on_result_for(coro, ident, result)
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str,
-        exception: Union[Exception, CancelledError]
+        self,
+        coro: Coroutine[Any, Any, Any],
+        ident: str,
+        exception: Union[Exception, CancelledError],
     ) -> None:
         for hooks in self.hooks_list:
             hooks.on_exception_for(coro, ident, exception)

@@ -1,5 +1,5 @@
-import asyncio
 import importlib
+import sys
 
 import pytest
 
@@ -13,15 +13,11 @@ def teardown_module(module):
     Reload ``async_reduce.aux`` for reset module caches after tests
     """
     from async_reduce import aux
+
     importlib.reload(aux)
 
 
 async def coro_function():
-    pass
-
-
-@asyncio.coroutine
-def gen_function():
     pass
 
 
@@ -36,24 +32,30 @@ async def test_coro():
     coro.close()
 
 
+@pytest.mark.skipif(
+    sys.version_info >= (3, 10), reason='asyncio.coroutine has been removed'
+)
 async def test_gen():
+    import asyncio
+
+    @asyncio.coroutine
+    def gen_function():
+        pass
+
     coro = gen_function()
 
     result = get_coroutine_function_location(coro)
-    assert result == (
-        'asyncio.coroutines:gen_function'
-    )
+    assert result == ('asyncio.coroutines:test_gen.<locals>.gen_function')
 
     coro.close()
 
 
-@pytest.mark.parametrize('value', [
-    [], [''], ['/'], ['/other/']
-])
+@pytest.mark.parametrize('value', [[], [''], ['/'], ['/other/']])
 async def test_unmatched_with_sys_path(monkeypatch, value):
     monkeypatch.setattr('sys.path', value)
 
     from async_reduce import aux
+
     importlib.reload(aux)
 
     coro = coro_function()

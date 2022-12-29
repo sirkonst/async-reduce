@@ -16,38 +16,34 @@ class DebugHooks(BaseHooks):
     def on_apply_for(self, coro: Coroutine[Any, Any, Any], ident: str) -> None:
         print(
             '[{}] apply async_reduce() for {}'.format(ident, coro),
-            file=self._steam
+            file=self._steam,
         )
 
     def on_executing_for(
         self, coro: Coroutine[Any, Any, Any], ident: str
     ) -> None:
-        print(
-            '[{}] executing for {}'.format(ident, coro),
-            file=self._steam
-        )
+        print('[{}] executing for {}'.format(ident, coro), file=self._steam)
 
     def on_reducing_for(
         self, coro: Coroutine[Any, Any, Any], ident: str
     ) -> None:
-        print(
-            '[{}] reducing for {}'.format(ident, coro),
-            file=self._steam
-        )
+        print('[{}] reducing for {}'.format(ident, coro), file=self._steam)
 
     def on_result_for(
         self, coro: Coroutine[Any, Any, Any], ident: str, result: Any
     ) -> None:
         print(
             '[{}] result for {}: {}'.format(ident, coro, result),
-            file=self._steam
+            file=self._steam,
         )
 
     def on_exception_for(
-        self, coro: Coroutine[Any, Any, Any], ident: str,
-        exception: Union[Exception, CancelledError]
+        self,
+        coro: Coroutine[Any, Any, Any],
+        ident: str,
+        exception: Union[Exception, CancelledError],
     ) -> None:
         print(
             '[{}] get exception for {}: {}'.format(ident, coro, exception),
-            file=self._steam
+            file=self._steam,
         )

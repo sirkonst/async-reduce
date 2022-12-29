@@ -6,7 +6,7 @@ stages:
 
 # -- Test ---------------------------------------------------------------------
 
-.test_template: &test_template
+test:
   stage: test
   image: python:$PYTHON_VERSION
   before_script:
@@ -16,27 +16,14 @@ stages:
   artifacts:
     paths:
       - .coverage/data*
-
-test_3.7:
-  <<: *test_template
-  variables:
-    PYTHON_VERSION: '3.7'
-
-test_3.8:
-  <<: *test_template
-  variables:
-    PYTHON_VERSION: '3.8'
-
-test_3.9:
-  <<: *test_template
-  variables:
-    PYTHON_VERSION: '3.9'
-
-test_3.10:
-  <<: *test_template
-  variables:
-    PYTHON_VERSION: '3.10'
-
+  parallel:
+    matrix:
+      - PYTHON_VERSION:
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
 
 # -- Test Post ----------------------------------------------------------------
 
@@ -48,10 +35,7 @@ coverage:
   script:
     - tox -e coverage_report
   dependencies:
-    - test_3.7
-    - test_3.8
-    - test_3.9
-    - test_3.10
+    - test
   coverage: '/TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+[.]\d+?)\%/'
   artifacts:
     paths:

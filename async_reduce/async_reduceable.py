@@ -7,7 +7,7 @@ T_AsyncFunc = TypeVar('T_AsyncFunc')
 
 
 def async_reduceable(
-    reducer: AsyncReducer = async_reduce
+    reducer: AsyncReducer = async_reduce,
 ) -> Callable[[T_AsyncFunc], T_AsyncFunc]:
     """
     Decorator to apply ``async_reduce(...)`` automatically for each coroutine
@@ -27,7 +27,6 @@ def async_reduceable(
     """
 
     def wrapper(fn):
-
         @wraps(fn)
         async def wrap(*args, **kwargs):
             return await reducer(fn(*args, **kwargs))
@@ -35,6 +34,7 @@ def async_reduceable(
         return wrap
 
     return wrapper
+
 
 # ---
 #
