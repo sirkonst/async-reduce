@@ -1,7 +1,7 @@
 with import <nixpkgs> { };
 
 let
-  pythonPackages = python311Packages;
+  pythonPackages = python313Packages;
   pythonVenvDir = ".local/${pythonPackages.python.name}";
   envPackages = [
     gitMinimal
