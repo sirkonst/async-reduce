@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.5
+---
+
+* Add support python 3.14
+* Add support python 3.15
+* Drop pylama (without a replacement yet)
+
 1.4
 ---
 

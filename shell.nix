@@ -1,17 +1,12 @@
 with import <nixpkgs> { };
 
 let
-  pythonPackages = python313Packages;
+  pythonPackages = python314Packages;
   pythonVenvDir = ".local/${pythonPackages.python.name}";
   envPackages = [
     gitMinimal
   ];
   preInstallPypiPackages = [
-    "blue"
-    "mypy"
-    "pylama"
-    "tox"
-    "ipykernel"
   ];
 in mkShell {
   name = "pythonProjectDevEnv";
